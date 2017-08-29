@@ -3,16 +3,7 @@ import web
 import json
 import jwt
 from flask import request,make_response
-options = {
-   'verify_signature': True,
-   'verify_exp': True,
-   'verify_nbf': True,
-   'verify_iat': True,
-   'verify_aud': True,
-   'require_exp': False,
-   'require_iat': False,
-   'require_nbf': False
-}
+
 
 class Authentication (object):
 
