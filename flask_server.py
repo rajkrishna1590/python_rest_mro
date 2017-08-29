@@ -17,7 +17,7 @@ class UserRegisteration():
 		return json.dumps(uesrs.create(data))
 
 class Users():	
-	@auth_fl.Authentication
+	@decorator.Authentication
 	def user_list(self):
 		uesrs = querybuilder.QueryBuilder('raj','users')
 		params={}
@@ -38,7 +38,7 @@ class Users():
 			return json.dumps(empty)
     
 		
-	@auth_fl.Authentication 
+	@decorator.Authentication 
 	def get_user(self, user):
 		uesrs = querybuilder.QueryBuilder('raj','users')
 		params={"id":user}
