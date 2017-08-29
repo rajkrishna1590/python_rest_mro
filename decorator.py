@@ -1,9 +1,7 @@
-import MySQLdb
+import querybuilder
 import web
 from flask import request
 
-db=MySQLdb.connect("localhost","root","","raj")
-c=db.cursor()
 
 class Authentication (object):
 
@@ -11,18 +9,14 @@ class Authentication (object):
         self.func = func
 
     def check_user(self,*args):
-        sql = "select * from users where id="+self.user+" and password='"+self.password+"'"
-        try:            
-            c.execute(sql)
-            results = c.fetchall()
-            if len(results) ==0:
-                return False
-            else:
-                return True
-        except:
-            print "Error: unable to fecth data"
-            error = {'error':'unable to fecth data'}
-            return error
+        uesrs = querybuilder.QueryBuilder('raj','users')
+        params={"id":self.user,"password":self.password}
+        select = ["id","password","name","age"]
+        results=uesrs.read(select,params)
+        if len(list(results)) ==0:
+            return False
+        else:
+             return True
 
     def check_auth(self,*args):       
 

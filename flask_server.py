@@ -29,7 +29,7 @@ class Users():
 			for row in next(results):
 				mapObj={}
 				mapObj["id"] = row[0]
-				mapObj["password"] = row[0]
+				mapObj["password"] = row[1]
 				mapObj["name"] = row[2]
 				mapObj["age"] = row[3]
 				output["data"].append(mapObj)
@@ -51,7 +51,7 @@ class Users():
 			for row in next(results):			 
 				mapObj={}			 
 				mapObj["id"] = row[0]
-				mapObj["password"] = row[0]
+				mapObj["password"] = row[1]
 				mapObj["name"] = row[2]
 				mapObj["age"] = row[3]			
 				output["data"].append(mapObj)
