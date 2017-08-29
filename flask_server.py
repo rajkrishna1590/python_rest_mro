@@ -2,23 +2,73 @@
 import querybuilder
 import json
 import decorator
+import jwt
+import datetime
+import time
 from flask import Flask,request
 app = Flask(__name__)
 
- 
 
-class UserRegisteration():
+
+class formresponse():
+	@decorator.Authentication
+	def returnFunc(self,header, data):		
+		return json.dumps(data)
+
+class UserLogin(formresponse):
+	def login(self):
+		json_dict = request.get_json()
+		uesrs = querybuilder.QueryBuilder('raj','users')
+		#loaded_r = json.dumps(json_dict)
+		params = {'id': json_dict['user'], 'password': json_dict['password']}
+		uesrs = querybuilder.QueryBuilder('raj','users')
+		select = ["id","password","name","age"];
+		results=uesrs.read(select,params);
+		output = {'data':[]}
+		empty = {"error":"Invalid User namr / Password"}
+		 
+		try:
+			for row in next(results):			 
+				mapObj={}			 
+				mapObj["id"] = row[0]
+				mapObj["password"] = row[1]
+				mapObj["name"] = row[2]
+				mapObj["age"] = row[3]
+				mapObj["message"] ='logged successfully'
+				output["data"].append(mapObj)
+			jwtObj = mapObj	
+			jwtObj['exp'] = datetime.datetime.utcnow() + datetime.timedelta(seconds=300)
+			jwt_payload = jwt.encode(jwtObj, 'secret')	
+			print(jwt_payload)		 
+			headers = {
+				'headers':{
+					'Token':jwt_payload,
+					'Content-Type':'application/json',
+					'status':200
+					}
+			}
+			return self.returnFunc(headers,output)
+		except StopIteration:
+			return json.dumps(empty) 
+
+class UserRegisteration(UserLogin,formresponse):
 	def create_user(self):
 		json_dict = request.get_json()
 		uesrs = querybuilder.QueryBuilder('raj','users')
 		#loaded_r = json.dumps(json_dict)
 		data = {'name': json_dict['name'], 'age': json_dict['age'], 'password': json_dict['password']}
-	 
-		return json.dumps(uesrs.create(data))
+	 	headers = {
+				'headers':{					
+					'Content-Type':'application/json',
+					'status':200
+					}
+			}
+		return self.returnFunc(headers,uesrs.create(data))
 
-class Users():	
+class Users(formresponse):	
 	@decorator.Authentication
 	def user_list(self):
+		print("user_list")
 		uesrs = querybuilder.QueryBuilder('raj','users')
 		params={}
 		select = ["id","password","name","age"]
@@ -33,7 +83,13 @@ class Users():
 				mapObj["name"] = row[2]
 				mapObj["age"] = row[3]
 				output["data"].append(mapObj)
-			return json.dumps(output)
+			headers = {
+				'headers':{					 
+					'Content-Type':'application/json',
+					'status':200
+					}
+			}
+			return formresponse.returnFunc(headers,output)
 		except StopIteration:
 			return json.dumps(empty)
     
@@ -55,8 +111,13 @@ class Users():
 				mapObj["name"] = row[2]
 				mapObj["age"] = row[3]			
 				output["data"].append(mapObj)
-			
-			return json.dumps(output)
+			headers = {
+				'headers':{					 
+					'Content-Type':'application/json',
+					'status':200
+					}
+			}
+			return formresponse.returnFunc(headers,output)
 		except StopIteration:
 			return json.dumps(empty)
 
@@ -73,11 +134,16 @@ def route_get_user(user):
 
 @app.route('/users')
 def route_user_list():
+	print("test")
 	return apiObj.user_list()
 
 @app.route('/create_user',methods=['POST'])
 def route_create_user():
 	return apiObj.create_user()
+
+@app.route('/login',methods=['POST'])
+def route_login():
+	return apiObj.login()
     		
 
 app.run()
