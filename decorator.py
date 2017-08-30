@@ -3,7 +3,16 @@ import web
 import json
 import jwt
 from flask import request,make_response
-
+options = {
+   'verify_signature': True,
+   'verify_exp': True,
+   'verify_nbf': True,
+   'verify_iat': True,
+   'verify_aud': True,
+   'require_exp': False,
+   'require_iat': False,
+   'require_nbf': False
+}
 
 class Authentication (object):
 
@@ -55,23 +64,23 @@ class Authentication (object):
                 return self.func (self,*args)
             elif res==False:
                 error = {'error':'Invalid logged in User'}
-                return error
+                return json.dumps(error)
             else:
                 error = {'error':'unable to fecth data'}
-                return error
+                return json.dumps(error)
 
         else:
             result ={
                     "error":"Invalid Authentication"
                 } 
-            return result
-        return result
+            return json.dumps(result)
+        
 
     def __call__ (self, *args):
         print(args)
         try:
             if len(args)!=0 and args[0]['headers']:
-                print("add_response_headers")      
+                
                 return self.add_response_headers(*args)
             else:
                 print("check_auth")

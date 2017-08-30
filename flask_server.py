@@ -5,6 +5,7 @@ import decorator
 import jwt
 import datetime
 import time
+import copy
 from flask import Flask,request
 app = Flask(__name__)
 
@@ -36,15 +37,15 @@ class UserLogin(formresponse):
 				mapObj["age"] = row[3]
 				mapObj["message"] ='logged successfully'
 				output["data"].append(mapObj)
-			jwtObj = mapObj	
-			jwtObj['exp'] = datetime.datetime.utcnow() + datetime.timedelta(seconds=300)
+			jwtObj = copy.deepcopy(mapObj)
+			jwtObj['exp'] = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
 			jwt_payload = jwt.encode(jwtObj, 'secret')	
 			print(jwt_payload)		 
 			headers = {
 				'headers':{
 					'Token':jwt_payload,
 					'Content-Type':'application/json',
-					'status':200
+					'status_code':200
 					}
 			}
 			return self.returnFunc(headers,output)
@@ -60,7 +61,7 @@ class UserRegisteration(UserLogin,formresponse):
 	 	headers = {
 				'headers':{					
 					'Content-Type':'application/json',
-					'status':200
+					'status_code':200
 					}
 			}
 		return self.returnFunc(headers,uesrs.create(data))
@@ -86,7 +87,7 @@ class Users(formresponse):
 			headers = {
 				'headers':{					 
 					'Content-Type':'application/json',
-					'status':200
+					'status_code':200
 					}
 			}
 			return formresponse.returnFunc(headers,output)
@@ -114,7 +115,7 @@ class Users(formresponse):
 			headers = {
 				'headers':{					 
 					'Content-Type':'application/json',
-					'status':200
+					'status_code':200
 					}
 			}
 			return formresponse.returnFunc(headers,output)

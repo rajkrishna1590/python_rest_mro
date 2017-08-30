@@ -1,0 +1,26 @@
+{
+	"login":{
+		"data": [
+			{
+				"name": "raj",
+				"age": 1,				 
+				"message": "logged successfully",
+				"password": "password",
+				"id": 2
+			}
+		]
+	},
+	"get_user":{
+		"data": [
+			{
+				"name": "raj",
+				"age": 1,
+				"password": "password",
+				"id": 2
+			}
+		]
+	},
+	"create_user":{
+		"message": "New record added"
+	}
+}
