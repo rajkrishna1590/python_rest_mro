@@ -2,7 +2,7 @@ import json
 import pytest
 from flask_server import app
 
-with open('response.json') as data_file:    
+with open('mro_response.json') as data_file:    
     data = json.load(data_file)
 
 @pytest.fixture
